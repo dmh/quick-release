@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Dmytro Hrynevych",
+  "repository": "dmh/quick-release",
   "bin": {
-    "eee": "./index.js"
+    "quick-release": "./index.js"
   },
   "license": "MIT",
   "dependencies": {
