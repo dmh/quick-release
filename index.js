@@ -2,12 +2,12 @@
 
 'use strict';
 
-const git = require('./git');
-const info = require('./info');
+const git = require('./lib/git');
+const info = require('./lib/info');
 const shell = require('shelljs');
-const prompt = require('./prompt');
-const github = require('./github');
-const changelog = require('./changelog');
+const prompt = require('./lib/prompt');
+const github = require('./lib/github');
+const changelog = require('./lib/changelog');
 
 var cache = {};
 
