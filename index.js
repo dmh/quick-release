@@ -5,6 +5,7 @@
 const git = require('./lib/git');
 const info = require('./lib/info');
 const shell = require('shelljs');
+const npmfn = require('./lib/npmfn');
 const prompt = require('./lib/prompt');
 const github = require('./lib/github');
 const changelog = require('./lib/changelog');
@@ -24,6 +25,7 @@ if (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < nodeVer) {
     shell.exit(1);
 }
 
+// ====== Caching info ======
 git.isRepo(cache)
     .then(git.check)
     .then(git.isMaster)
@@ -37,18 +39,18 @@ git.isRepo(cache)
     .then(git.remote)
     .then(git.parseRemoteUrl)
     .then(changelog.getCommitMessages)
-    // .then(function(val) {
-    //     console.log(cache);
-    //     return val;
-    // })
-    // .then(prompt.isGood)
-
-
-
     .then(info.changelogDraft)
     .then(info.readyForRelease)
     .then(info.branchWarning)
     .then(prompt.isGood)
+
+    // ====== Caching npm info ======
+    .then(npmfn.isUser)
+    .then(npmfn.isPackageJson)
+    .then(npmfn.bumpPackageVersion)
+    .then(prompt.isGood)
+
+    //===== Add files to git index + info messages ===
     .then(changelog.write)
     .then(changelog.addChangelogToIndex)
     .then(git.add)
@@ -57,39 +59,40 @@ git.isRepo(cache)
     .then(info.commitWarning)
     .then(prompt.isGood)
     .then(info.tagWarning)
+
+    //=== git commit + push + tag + push --tags ===
     .then(git.commit)
     .then(git.push)
     .then(git.addTag)
     .then(git.pushTags)
+
+    //===== Npm publish ================
+    // .then(prompt.isNpmPublish)
+    // .then(info.npm)
+    // .then(info.npmWarning)
+    // .then(npmfn.publish)
+
     //===== Github release =============
     .then(prompt.isGithubRelease)
     .then(github.user)
     .then(github.token)
     .then(prompt.githubUser)
     .then(prompt.githubPass)
+    .then(github.authenticate)
+    //==================================
+    .then(info.done)
     // .then(function(val) {
     //     console.log(cache);
     //     return val;
     // })
-    // .then(prompt.isGood)
-
-
-
-    .then(github.authenticate)
-    //=============================
-    .then(info.done)
 
     .catch(function(err) { console.log('Error!', err); });
 
 // TODO: add presets = github release, github release + npm + customize
 // TODO: if customize add checkboxes = git tag + git release + npm +
-// TODO: changelog?
 // TODO: remove dependencies simple-git check deppendencies
 // TODO: func for errors with colors and explanations
-
-
 // TODO: add yaml parser with file to indentify changelog file + labels + remote repo + template
 // TODO: add message if no file we will use standart labels, changelog, template etc...
-
 // TODO: install ES6 promises
-// TODO: define name!!!!
+// TODO: add massage if something wrong with github release
