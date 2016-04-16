@@ -39,16 +39,16 @@ git.isRepo(cache)
     .then(git.remote)
     .then(git.parseRemoteUrl)
     .then(changelog.getCommitMessages)
+    .then(npmfn.isPackageJson)
     .then(info.changelogDraft)
     .then(info.readyForRelease)
+    .then(info.showPackageJsonVersion)
     .then(info.branchWarning)
-    .then(prompt.isGood)
 
-    // ====== Caching npm info ======
-    .then(npmfn.isUser)
-    .then(npmfn.isPackageJson)
-    .then(npmfn.bumpPackageVersion)
+    // ====== package.json ======
     .then(prompt.isGood)
+    .then(npmfn.bumpPackageVersion)
+    .then(npmfn.addPackageToIndex)
 
     //===== Add files to git index + info messages ===
     .then(changelog.write)
@@ -67,9 +67,8 @@ git.isRepo(cache)
     .then(git.pushTags)
 
     //===== Npm publish ================
-    // .then(prompt.isNpmPublish)
-    // .then(info.npm)
-    // .then(info.npmWarning)
+    .then(prompt.isNpmPublish)
+    .then(npmfn.isUser)
     // .then(npmfn.publish)
 
     //===== Github release =============
