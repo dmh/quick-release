@@ -33,6 +33,10 @@ git.isRepo(cache)
     .then(prompt.gitAdd)
     .then(git.getLatestTag)
     .then(prompt.newVersion)
+    // .then(function(val) {
+    //     console.log(cache);
+    //     return val;
+    // })
     .then(git.currentCommitHash)
     .then(git.getCurrentTag)
     .then(git.dateNow)
@@ -66,11 +70,6 @@ git.isRepo(cache)
     .then(git.addTag)
     .then(git.pushTags)
 
-    //===== Npm publish ================
-    .then(prompt.isNpmPublish)
-    .then(npmfn.isUser)
-    .then(npmfn.publish)
-
     //===== Github release =============
     .then(prompt.isGithubRelease)
     .then(github.user)
@@ -82,6 +81,11 @@ git.isRepo(cache)
     //     console.log(cache);
     //     return val;
     // })
+    //===== Npm publish ================
+    .then(prompt.isNpmPublish)
+    .then(npmfn.isUser)
+    .then(npmfn.publish)
+
     //==================================
     .then(info.done)
 
