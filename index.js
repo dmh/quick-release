@@ -69,7 +69,7 @@ git.isRepo(cache)
     //===== Npm publish ================
     .then(prompt.isNpmPublish)
     .then(npmfn.isUser)
-    // .then(npmfn.publish)
+    .then(npmfn.publish)
 
     //===== Github release =============
     .then(prompt.isGithubRelease)
@@ -78,17 +78,15 @@ git.isRepo(cache)
     .then(prompt.githubUser)
     .then(prompt.githubPass)
     .then(github.authenticate)
-    //==================================
-    .then(info.done)
     // .then(function(val) {
     //     console.log(cache);
     //     return val;
     // })
+    //==================================
+    .then(info.done)
 
     .catch(function(err) { console.log('Error!', err); });
 
-// TODO: add presets = github release, github release + npm + customize
-// TODO: if customize add checkboxes = git tag + git release + npm +
 // TODO: remove dependencies simple-git check deppendencies
 // TODO: func for errors with colors and explanations
 // TODO: add yaml parser with file to indentify changelog file + labels + remote repo + template
