@@ -43,6 +43,26 @@ function check() {
     .catch((err) => { helpers.error('check', err);});
 }
 
+//===== Github release =============
+function githubReleaseAPI() {
+    return helpers.promiseChainStarter(cache)
+    .then(prompt.isGithubRelease)
+    .then(github.user)
+    .then(github.token)
+    .then(prompt.githubUser)
+    .then(prompt.githubPass)
+    .then(github.authenticate)
+    .catch((err) => { helpers.error('githubReleaseAPI', err);});
+}
+
+//===== Npm publish ==============
+function npmPublish() {
+    return helpers.promiseChainStarter(cache)
+    .then(prompt.isNpmPublish)
+    .then(npmfn.isUser)
+    .then(npmfn.publish)
+    .catch((err) => { helpers.error('npmPublish', err);});
+}
 // ==========================
 // ===== Github Release =====
 // ==========================
@@ -75,13 +95,9 @@ function githubRelease() {
     .then(git.push)
     .then(git.pushTags)
 
-    //===== Github release =============
-    .then(prompt.isGithubRelease)
-    .then(github.user)
-    .then(github.token)
-    .then(prompt.githubUser)
-    .then(prompt.githubPass)
-    .then(github.authenticate)
+    // ===== Github release =====
+    .then(githubReleaseAPI)
+
     .then(info.done)
     .catch((err) => { helpers.error('githubRelease', err);});
 }
@@ -124,18 +140,12 @@ function githubNpmRelease() {
     .then(git.push)
     .then(git.pushTags)
 
-    // ===== Github release =============
-    .then(prompt.isGithubRelease)
-    .then(github.user)
-    .then(github.token)
-    .then(prompt.githubUser)
-    .then(prompt.githubPass)
-    .then(github.authenticate)
+    // ===== Github release =====
+    .then(githubReleaseAPI)
 
     //===== Npm publish ==============
-    .then(prompt.isNpmPublish)
-    .then(npmfn.isUser)
-    .then(npmfn.publish)
+    .then(npmPublish)
+
     .then(info.done)
     .catch((err) => { helpers.error('githubNpmRelease', err);});
 }
