@@ -79,6 +79,7 @@ function githubRelease() {
     .then(prompt.isGood)
 
     //===== Add files to git index + info messages ===
+    .then(changelog.isChangelog)
     .then(changelog.write)
     .then(changelog.addChangelogToIndex)
     .then(git.add)
@@ -124,6 +125,7 @@ function githubNpmRelease() {
     .then(npmfn.addPackageToIndex)
 
     //===== Add files to git index + info messages ===
+    .then(changelog.isChangelog)
     .then(changelog.write)
     .then(changelog.addChangelogToIndex)
     .then(git.add)
@@ -166,7 +168,6 @@ function run() {
 //====================================================
 
 if (_.size(argv) !== 1 || argv._.length) {
-
     // quick-release  -h, --help
     if (argv.h || argv.help) {
         info.help();
@@ -204,3 +205,11 @@ if (_.size(argv) !== 1 || argv._.length) {
 // TODO: check "git-rev"
 // TODO: check "is-git-url"
 // TODO: check "git-raw-commits"
+
+// TODO: add separated option simple release
+// TODO: add separated option github release addPackageToIndex
+// TODO: add separated option npm publish
+
+// TODO: if changelog is not exist -> create it and commit
+
+// TODO: process.exit() 1 - 0
