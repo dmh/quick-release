@@ -1,3 +1,8 @@
+#### v0.0.3 `May 14, 2016`
+- **[FEATURE]** create CHANGELOG if it not exist ([fc8a913](https://github.com/dmh/quick-release/commit/fc8a913))
+- **[FEATURE]** add help info ([aba60a3](https://github.com/dmh/quick-release/commit/aba60a3))
+- **[DOC]** add gif-s to README ([f4535f4](https://github.com/dmh/quick-release/commit/f4535f4))
+
 #### v0.0.2 `May 10, 2016`
 - **[UPDATE]** dependencies ([f3a6f8e](https://github.com/dmh/quick-release/commit/f3a6f8e))
 - **[REFACTOR]** fn for githubRelease/npm ([57fe4b2](https://github.com/dmh/quick-release/commit/57fe4b2))
