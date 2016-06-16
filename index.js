@@ -69,6 +69,7 @@ function npmPublish() {
 function githubRelease() {
     return helpers.promiseChainStarter(cache)
     .then(check)
+    .then(npmfn.isPackageJsonExist)
     .then(prompt.gitAdd)
     .then(prompt.newVersion)
     .then(changelog.getCommitMessages)
@@ -76,7 +77,37 @@ function githubRelease() {
     .then(info.changelogDraft)
     .then(info.readyForRelease)
     .then(info.branchWarning)
+
+    // if package.json exist -> show info
+    .then((cache) => {
+        if (cache.isPackageJsonExist) {
+            return helpers.promiseChainStarter(cache)
+            .then(npmfn.isPackageJson)
+            .then(info.showPackageJsonVersion);
+        } else {
+            return cache;
+        }
+    })
     .then(prompt.isGood)
+
+    // if package.json exist -> bump it and add to commit
+    .then((cache) => {
+        if (cache.isPackageJsonExist) {
+            return helpers.promiseChainStarter(cache)
+            .then(prompt.isPackageJsonBump)
+            .then(cache => {
+                if (cache.isPackageJsonBump) {
+                    return helpers.promiseChainStarter(cache)
+                    .then(npmfn.bumpPackageVersion)
+                    .then(npmfn.addPackageToIndex);
+                } else {
+                    return cache;
+                }
+            });
+        } else {
+            return cache;
+        }
+    })
 
     //===== Add files to git index + info messages ===
     .then(changelog.isChangelog)
