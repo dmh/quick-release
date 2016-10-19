@@ -1,6 +1,6 @@
 {
   "name": "quick-release",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Quickly generate and publish your application releases",
   "main": "index.js",
   "scripts": {

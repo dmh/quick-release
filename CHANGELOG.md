@@ -1,3 +1,10 @@
+
+#### v0.1.0 `October 19, 2016`
+- **[FEATURE]** add more possible prefixes for commit messages ([d1a5c3c](https://github.com/dmh/quick-release/commit/d1a5c3c))
+- **[FEATURE]** add possibility to parsing breaking changes (!!!) and add it to changelog ([5a40da8](https://github.com/dmh/quick-release/commit/5a40da8))
+- **[FEATURE]** update version of package.json if it exist, for Github release ([adb97be](https://github.com/dmh/quick-release/commit/adb97be))
+
+***
 #### v0.0.3 `May 14, 2016`
 - **[FEATURE]** create CHANGELOG if it not exist ([fc8a913](https://github.com/dmh/quick-release/commit/fc8a913))
 - **[FEATURE]** add help info ([aba60a3](https://github.com/dmh/quick-release/commit/aba60a3))
