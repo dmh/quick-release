@@ -1,246 +1,85 @@
 #!/usr/bin/env node
 
-'use strict';
+'use strict'
 
-const _ = require('lodash');
-const git = require('./lib/git');
-const info = require('./lib/info');
-const shell = require('shelljs');
-const npmfn = require('./lib/npmfn');
-const prompt = require('./lib/prompt');
-const github = require('./lib/github');
-const helpers = require('./lib/helpers');
-const changelog = require('./lib/changelog');
-const argv = require('minimist')(process.argv.slice(2));
+const chalk = require('chalk')
+const mri = require('mri')
+const prompt = require('./lib/prompt')
+const helpers = require('./lib/helpers')
+const text = require('./lib/text')
+const subTask = require('./lib/tasks/subTask')
+const local = require('./lib/tasks/local')
+const githubRelease = require('./lib/tasks/githubRelease')
+const test = require('./lib/tasks/test')
 
-var cache = {};
+const args = process.argv.slice(2)
 
-// Check is git installed
-if (!shell.which('git')) {
-    shell.echo('Sorry, this script requires git');
-    shell.exit(1);
-}
+var cache = {}
 
-// Check node version
-const nodeVer = 5.6;
-if (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < nodeVer) {
-    shell.echo('Need to install new version of node.js (>= 5.6.0)');
-    shell.exit(1);
-}
-
-// ====== Caching info ======
-function check() {
-    return helpers.promiseChainStarter(cache)
-    .then(git.isRepo)
-    .then(git.check)
-    .then(git.isMaster)
-    .then(git.getLatestTag)
-    .then(git.currentCommitHash)
-    .then(git.getCurrentTag)
-    .then(git.dateNow)
-    .then(git.remote)
-    .then(git.parseRemoteUrl)
-    .catch((err) => { helpers.error('check', err);});
-}
-
-//===== Github release =============
-function githubReleaseAPI() {
-    return helpers.promiseChainStarter(cache)
-    .then(prompt.isGithubRelease)
-    .then(github.user)
-    .then(github.token)
-    .then(prompt.githubUser)
-    .then(prompt.githubPass)
-    .then(github.authenticate)
-    .catch((err) => { helpers.error('githubReleaseAPI', err);});
-}
-
-//===== Npm publish ==============
-function npmPublish() {
-    return helpers.promiseChainStarter(cache)
-    .then(prompt.isNpmPublish)
-    .then(npmfn.isUser)
-    .then(npmfn.publish)
-    .catch((err) => { helpers.error('npmPublish', err);});
-}
-// ==========================
-// ===== Github Release =====
-// ==========================
-function githubRelease() {
-    return helpers.promiseChainStarter(cache)
-    .then(check)
-    .then(npmfn.isPackageJsonExist)
-    .then(prompt.gitAdd)
-    .then(prompt.newVersion)
-    .then(changelog.getCommitMessages)
-
-    .then(info.changelogDraft)
-    .then(info.readyForRelease)
-    .then(info.branchWarning)
-
-    // if package.json exist -> show info
-    .then((cache) => {
-        if (cache.isPackageJsonExist) {
-            return helpers.promiseChainStarter(cache)
-            .then(npmfn.isPackageJson)
-            .then(info.showPackageJsonVersion);
-        } else {
-            return cache;
-        }
-    })
-    .then(prompt.isGood)
-
-    // if package.json exist -> bump it and add to commit
-    .then((cache) => {
-        if (cache.isPackageJsonExist) {
-            return helpers.promiseChainStarter(cache)
-            .then(prompt.isPackageJsonBump)
-            .then(cache => {
-                if (cache.isPackageJsonBump) {
-                    return helpers.promiseChainStarter(cache)
-                    .then(npmfn.bumpPackageVersion)
-                    .then(npmfn.addPackageToIndex);
-                } else {
-                    return cache;
-                }
-            });
-        } else {
-            return cache;
-        }
-    })
-
-    //===== Add files to git index + info messages ===
-    .then(changelog.isChangelog)
-    .then(changelog.write)
-    .then(changelog.addChangelogToIndex)
-    .then(git.add)
-    .then(git.stagedFiles)
-    .then(info.indexedFiles)
-    .then(info.commitWarning)
-    .then(prompt.isGood)
-    .then(info.tagWarning)
-
-    // === git commit + push + tag + push --tags ===
-    .then(git.commit)
-    .then(git.addTag)
-    .then(prompt.isGitPush)
-    .then(git.push)
-    .then(git.pushTags)
-
-    // ===== Github release =====
-    .then(githubReleaseAPI)
-
-    .then(info.done)
-    .catch((err) => { helpers.error('githubRelease', err);});
-}
-
-// ========================================
-// ===== Github Release + NPM Publish =====
-// ========================================
-function githubNpmRelease() {
-    return helpers.promiseChainStarter(cache)
-    .then(check)
-    .then(prompt.gitAdd)
-    .then(prompt.newVersion)
-    .then(changelog.getCommitMessages)
-    .then(npmfn.isPackageJson)
-
-    .then(info.changelogDraft)
-    .then(info.readyForRelease)
-    .then(info.showPackageJsonVersion)
-    .then(info.branchWarning)
-    .then(prompt.isGood)
-
-    // ====== bump package.json ======
-    .then(npmfn.bumpPackageVersion)
-    .then(npmfn.addPackageToIndex)
-
-    //===== Add files to git index + info messages ===
-    .then(changelog.isChangelog)
-    .then(changelog.write)
-    .then(changelog.addChangelogToIndex)
-    .then(git.add)
-    .then(git.stagedFiles)
-    .then(info.indexedFiles)
-    .then(info.commitWarning)
-    .then(prompt.isGood)
-    .then(info.tagWarning)
-
-    // === git commit + push + tag + push --tags ===
-    .then(git.commit)
-    .then(git.addTag)
-    .then(prompt.isGitPush)
-    .then(git.push)
-    .then(git.pushTags)
-
-    // ===== Github release =====
-    .then(githubReleaseAPI)
-
-    //===== Npm publish ==============
-    .then(npmPublish)
-
-    .then(info.done)
-    .catch((err) => { helpers.error('githubNpmRelease', err);});
-}
-
-function run() {
-    prompt.releaseType(cache)
-    .then(() => {
-        if (cache.releaseType === 'github') {
-            githubRelease();
-        } else if (cache.releaseType === 'github+npm') {
-            githubNpmRelease();
-        } else if (cache.releaseType === 'help') {
-            info.help();
-        }
-    }).catch((err) => { helpers.error('run', err);});
-}
-
-//====================================================
-
-if (_.size(argv) !== 1 || argv._.length) {
-    // quick-release  -h, --help
-    if (argv.h || argv.help) {
-        info.help();
-
-        // quick-release  -v, --version
-    } else if (argv.v || argv.version) {
-        info.showVersion();
-
-    // quick-release  -g, --github
-    } else if (argv.g || argv.github) {
-        cache.releaseType = 'github';
-        githubRelease();
-
-    // quick-release  -n, --githubnpm
-    } else if (argv.n || argv.githubnpm) {
-        cache.releaseType = 'github+npm';
-        githubNpmRelease();
-
-    // quick-release
-    } else {
-        info.help();
+const run = async () => {
+  try {
+    await subTask.sysTest(cache)
+    await subTask.repoInfo(cache)
+    if (!cache.releaseType) {
+      await prompt.releaseType(cache)
     }
-} else {
-    run();
+    if (cache.releaseType === `local`) {
+      await local.go(cache)
+    } else if (cache.releaseType === `github`) {
+      await githubRelease.go(cache)
+    } else if (cache.releaseType === `githubNpm`) {
+      await helpers.message(cache, text.notReady(), 'red')
+      process.exit(1)
+    } else if (cache.releaseType === `test`) {
+      await test.go(cache)
+    } else if (cache.releaseType === 'help') {
+      console.log(text.help(cache))
+    }
+    // console.log('log')
+    // console.log(cache)
+  } catch (err) {
+    console.log(chalk.red(text.err.stack))
+    console.log(err)
+  }
 }
 
-// TODO: remove dependencies simple-git check deppendencies
-// TODO: func for errors with colors and explanations
-// TODO: add yaml parser with file to indentify changelog file + labels + remote repo + template
-// TODO: add message if no file we will use standart labels, changelog, template etc...
-// TODO: install ES6 promises
-// TODO: add massage if something wrong with github release
+// scan for CLI flags and arguments
+if (args.length) {
+  const scanArgs = mri(args)
 
-// TODO: check "remote-origin-url"
-// TODO: check "git-rev"
-// TODO: check "is-git-url"
-// TODO: check "git-raw-commits"
+  // quick-release -h, --help
+  if (scanArgs.h === true || scanArgs.help === true) {
+    console.log(text.help(cache))
 
-// TODO: add separated option simple release
-// TODO: add separated option github release addPackageToIndex
-// TODO: add separated option npm publish
+    // quick-release  -v, --version
+  } else if (scanArgs.v === true || scanArgs.version === true) {
+    console.log(text.v)
 
-// TODO: if changelog is not exist -> create it and commit
+  // quick-release -l, --local
+  } else if (scanArgs.l === true || scanArgs.local === true) {
+    cache.releaseType = 'local'
+    helpers.message(cache, chalk.cyan(`Local Release`), `gray`, true, [0, 1, 0, 1], `round`, [1, 0])
+    run()
 
-// TODO: process.exit() 1 - 0
+  // quick-release -g, --github
+  } else if (scanArgs.g === true || scanArgs.github === true) {
+    cache.releaseType = 'github'
+    helpers.message(cache, chalk.cyan(`Github Release`), `gray`, true, [0, 1, 0, 1], `round`, [1, 0])
+    run()
+
+  // quick-release -n, --npm
+  } else if (scanArgs.n === true || scanArgs.npm === true) {
+    cache.releaseType = 'githubNpm'
+    helpers.message(cache, chalk.cyan(`Github + Npm Release`), `gray`, true, [0, 1, 0, 1], `round`, [1, 0])
+    helpers.message(cache, text.notReady(), 'red')
+    process.exit(1)
+  } else {
+    console.log(text.help(cache))
+  }
+} else {
+  run()
+}
+
+// TODO: add code comments
+// TODO: is online
+// TODO: push with https + error handlers
