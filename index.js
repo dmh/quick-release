@@ -35,8 +35,8 @@ const run = async () => {
     } else if (cache.releaseType === 'help') {
       console.log(text.help(cache))
     }
-    // console.log('log')
-    // console.log(cache)
+    console.log('log')
+    console.log(cache)
   } catch (err) {
     console.log(chalk.red(text.err.stack))
     console.log(err)
@@ -81,5 +81,6 @@ if (args.length) {
 }
 
 // TODO: add code comments
-// TODO: is online
-// TODO: push with https + error handlers
+// TODO: update documentation
+// TODO: is-my-json-valid
+// TODO: notification when a new version is available
