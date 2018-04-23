@@ -10,6 +10,7 @@ const text = require('./lib/text')
 const subTask = require('./lib/tasks/subTask')
 const local = require('./lib/tasks/local')
 const githubRelease = require('./lib/tasks/githubRelease')
+const githubNpmRelease = require('./lib/tasks/githubNpmRelease')
 const test = require('./lib/tasks/test')
 
 const args = process.argv.slice(2)
@@ -28,8 +29,7 @@ const run = async () => {
     } else if (cache.releaseType === `github`) {
       await githubRelease.go(cache)
     } else if (cache.releaseType === `githubNpm`) {
-      await helpers.message(cache, text.notReady(), 'red')
-      process.exit(1)
+      await githubNpmRelease.go(cache)
     } else if (cache.releaseType === `test`) {
       await test.go(cache)
     } else if (cache.releaseType === 'help') {
@@ -67,12 +67,11 @@ if (args.length) {
     helpers.message(cache, chalk.cyan(`Github Release`), `gray`, true, [0, 1, 0, 1], `round`, [1, 0])
     run()
 
-  // quick-release -n, --npm
+    // quick-release -n, --npm
   } else if (scanArgs.n === true || scanArgs.npm === true) {
     cache.releaseType = 'githubNpm'
     helpers.message(cache, chalk.cyan(`Github + Npm Release`), `gray`, true, [0, 1, 0, 1], `round`, [1, 0])
-    helpers.message(cache, text.notReady(), 'red')
-    process.exit(1)
+    run()
   } else {
     console.log(text.help(cache))
   }
@@ -81,6 +80,6 @@ if (args.length) {
 }
 
 // TODO: add code comments
+// TODO: code cleanup
 // TODO: update documentation
-// TODO: is-my-json-valid
 // TODO: notification when a new version is available
