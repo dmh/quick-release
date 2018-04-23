@@ -11,7 +11,6 @@ const subTask = require('./lib/tasks/subTask')
 const local = require('./lib/tasks/local')
 const githubRelease = require('./lib/tasks/githubRelease')
 const githubNpmRelease = require('./lib/tasks/githubNpmRelease')
-const test = require('./lib/tasks/test')
 
 const args = process.argv.slice(2)
 
@@ -30,13 +29,11 @@ const run = async () => {
       await githubRelease.go(cache)
     } else if (cache.releaseType === `githubNpm`) {
       await githubNpmRelease.go(cache)
-    } else if (cache.releaseType === `test`) {
-      await test.go(cache)
     } else if (cache.releaseType === 'help') {
       console.log(text.help(cache))
     }
-    console.log('log')
-    console.log(cache)
+    // console.log('log')
+    // console.log(cache)
   } catch (err) {
     console.log(chalk.red(text.err.stack))
     console.log(err)
