@@ -1,4 +1,10 @@
 
+#### v2.0.0 `April 23, 2018`
+- **[TASK]** add package-lock ([515cf37](https://github.com/dmh/quick-release/commit/515cf37))
+- **[TASK]** update dependencies ([64ab944](https://github.com/dmh/quick-release/commit/64ab944))
+
+***
+
 #### v0.1.0 `October 19, 2016`
 - **[FEATURE]** add more possible prefixes for commit messages ([d1a5c3c](https://github.com/dmh/quick-release/commit/d1a5c3c))
 - **[FEATURE]** add possibility to parsing breaking changes (!!!) and add it to changelog ([5a40da8](https://github.com/dmh/quick-release/commit/5a40da8))
