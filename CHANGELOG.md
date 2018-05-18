@@ -1,4 +1,13 @@
 
+#### v2.0.1 `May 18, 2018`
+- **[DOC]** update documentation ([4227290](https://github.com/dmh/quick-release/commit/4227290))
+- **[TASK]** add license file ([d1469d6](https://github.com/dmh/quick-release/commit/d1469d6))
+- **[TASK]** update .qrconfig ([f432ef5](https://github.com/dmh/quick-release/commit/f432ef5))
+- **[TASK]** remove .jscsrc and .jshintrc ([6edf886](https://github.com/dmh/quick-release/commit/6edf886))
+- **[DOC]** update README, add gif images ([ae3a90a](https://github.com/dmh/quick-release/commit/ae3a90a))
+
+***
+
 #### v2.0.0 `April 23, 2018`
 - **[TASK]** add package-lock ([515cf37](https://github.com/dmh/quick-release/commit/515cf37))
 - **[TASK]** update dependencies ([64ab944](https://github.com/dmh/quick-release/commit/64ab944))

@@ -1,6 +1,6 @@
 {
   "name": "quick-release",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Quickly generate and publish your application releases",
   "license": "MIT",
   "author": "Dmytro Hrynevych",
