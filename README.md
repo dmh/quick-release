@@ -6,7 +6,7 @@
 
 ## About
 
-With **quick-release**, you can quickly generate your application release. Just install it and execute inside of the folder with your app/extension/plugin when you will be ready for new release. You will be able to do local, Github or NPM release. Also, it will generate changelog for your new release based on git log. In every step, you will have all needed instructions, and a possibility to stop if something goes wrong.
+With **quick-release**, you can quickly generate your application release. Just install it and execute inside of the folder with your app/extension/plugin when you will be ready for new release. You will be able to do **Local**, **Github** or **NPM** release. Also, it will generate changelog for your new release based on `git log`. In every step, you will have all needed instructions and a possibility to stop if something goes wrong.
 
 ## Install
 
@@ -25,11 +25,11 @@ npm install -g quick-release
 ### Options
 
 ```console
--h, --help    - quick help
--v, --version - print the quick-release version.
--l, --local   - Local Release.
--g, --github  - Github Release.
--n, --npm     - Github Release + NPM Release.
+-h, --help        - quick help
+-v, --version     - print the quick-release version.
+-l, --local       - Local Release.
+-g, --github      - Github Release.
+-n, --npm         - Github Release + NPM Release.
 ```
 
 ## Release types
@@ -47,7 +47,7 @@ npm install -g quick-release
 
 ## Changelog generator
 
-Every release should consist of at least with a changelog and the fastest way to create changelog is to parse your `git log`. With **quick-release** it is easy to do, you just need to add prefixes to every commit which you want to see in the changelog. So the rule is: if git commit with prefix - goes to the changelog, without prefix - no. Also, you are able to mark commit as a breaking change with the prefix `[!!!]`.
+Every release should consist of at least changelog and the fastest way to create it is to parse your `git log`. With **quick-release** it is easy to do, you just need to add prefixes to every commit which you want to see in the changelog. So the rule is: if git commit with prefix - goes to the changelog, without prefix - no. Also, you are able to mark commit as a breaking change with the prefix `[!!!]`.
 
 By default **quick-release** parsing only specific prefixes, but you are able to change them in `.qrconfig` file.
 
