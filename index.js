@@ -77,6 +77,4 @@ if (args.length) {
 }
 
 // TODO: add code comments
-// TODO: code cleanup
-// TODO: update documentation
 // TODO: notification when a new version is available
