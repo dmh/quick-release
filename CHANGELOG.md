@@ -1,4 +1,12 @@
 
+#### v2.1.0 `December 8, 2018`
+
+- **[TASK]** fix markdownlint warning. Headings should be surrounded by blank lines. ([414c011](https://github.com/dmh/quick-release/commit/414c011))
+- **[FEATURE]** show (not staged for commit) files per line to make it more readable ([7fbf1c5](https://github.com/dmh/quick-release/commit/7fbf1c5))
+- **[BUGFIX]** fix the main check function for supported Nodejs versions ([e57f294](https://github.com/dmh/quick-release/commit/e57f294))
+
+***
+
 #### v2.0.1 `May 18, 2018`
 - **[DOC]** update documentation ([4227290](https://github.com/dmh/quick-release/commit/4227290))
 - **[TASK]** add license file ([d1469d6](https://github.com/dmh/quick-release/commit/d1469d6))
