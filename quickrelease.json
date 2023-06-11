@@ -1,0 +1,5 @@
+{
+  "gitLabels": ["[FEATURE]", "[DOC]", "[TEST]", "[UPDATE]", "[BUGFIX]", "[TASK]"],
+  "changelogFile": "CHANGELOG.md",
+  "breakingChangesTitle": ":heavy_exclamation_mark:**Breaking Changes:**"
+}
