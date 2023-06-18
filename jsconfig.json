@@ -8,5 +8,5 @@
     "useUnknownInCatchVariables": false,
     "moduleResolution": "node"
   },
-  "include": ["lib/**/*", "index.js", "test/**/*"],
+  "include": ["lib/**/*", "bin/**/*", "test/**/*"],
 }

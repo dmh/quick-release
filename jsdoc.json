@@ -1,7 +1,7 @@
 {
   "plugins": ["plugins/markdown"],
   "source": {
-    "include": ["lib/", "index.js"]
+    "include": ["lib/", "bin/" ]
   },
   "templates": {
     "cleverLinks": true,
