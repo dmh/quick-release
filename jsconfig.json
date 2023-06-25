@@ -6,7 +6,11 @@
     "checkJs": true,
     "forceConsistentCasingInFileNames": true,
     "useUnknownInCatchVariables": false,
-    "moduleResolution": "node"
+    "moduleResolution": "nodenext",
+    "baseUrl": "./",
+    "paths": {
+        "#*": ["./lib/lib/*"]
+    }
   },
   "include": ["lib/**/*", "bin/**/*", "test/**/*"],
 }
