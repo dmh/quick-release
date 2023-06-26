@@ -1,1 +1,7 @@
-
+{
+  "quick-release": "https://www.npmjs.com/package/quick-release",
+  "changelog": {
+    "labels": ["[FEATURE]","[TASK]","[BUGFIX]","[DOC]","[TEST]"],
+    "breakingLabel": "[!!!]"
+  }
+}
