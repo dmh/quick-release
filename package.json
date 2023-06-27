@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@inquirer/prompts": "2.2.0",
+    "@octokit/core": "4.2.4",
     "chalk": "5.2.0",
     "dotenv": "16.3.1",
     "editorconfig": "1.0.3",
