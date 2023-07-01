@@ -4,5 +4,5 @@
     "labels": ["[FEATURE]","[BUGFIX]","[TASK]","[DOC]","[TEST]"],
     "breakingLabel": "[!!!]"
   },
-  "githubReleaseTitles": ["Features", "Bugfixes", "General", "Documentation", "Test"]
+  "githubReleaseTitles": ["New Features", "Bugfixes", "General", "Documentation", "Tests"]
 }
