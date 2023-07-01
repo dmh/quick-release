@@ -1,3 +1,3 @@
 #!/usr/bin/env node
-import { init } from '../lib/lib/init.js'
+import { init } from '#init.js'
 await init()

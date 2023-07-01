@@ -1,5 +1,5 @@
 {
-  "name": "qr",
+  "name": "quick-release",
   "version": "2.1.0",
   "description": "Quickly generate and publish your application releases",
   "license": "MIT",
@@ -8,11 +8,11 @@
     "type": "git",
     "url": "https://github.com/dmh/quick-release.git"
   },
-  "main": "index.js",
   "bin": {
+    "quick-release": "./bin/qr-cli.js",
     "qr": "./bin/qr-cli.js"
   },
-  "homepage": "",
+  "homepage": "https://dmh.github.io/quick-release",
   "bugs": {
     "url": "https://github.com/dmh/quick-release/issues"
   },
@@ -39,13 +39,13 @@
   ],
   "scripts": {
     "prepare": "husky install",
-    "lint-js": "standard -v 'lib/**/*.js' 'bin/**/*.js' 'test/**/*.js'",
+    "lint-js": "standard -v 'lib/**/*.js' 'bin/**/*.js'",
     "check-js": "tsc -p jsconfig.json --maxNodeModuleJsDepth 0",
     "test": "npm run lint-js && npm run check-js",
     "docs": "jsdoc -c jsdoc.json"
   },
   "imports": {
-    "#*": "./lib/lib/*"
+    "#*": "./lib/*"
   },
   "dependencies": {
     "@inquirer/prompts": "2.2.0",
@@ -56,16 +56,17 @@
     "execa": "7.1.1",
     "git-url-parse": "13.1.0",
     "is-online": "10.0.0",
-    "jsdoc": "4.0.2",
     "minimist": "1.2.8",
-    "modern-jsdoc-template": "1.0.0",
     "ora": "6.3.1",
     "semver": "7.5.3"
   },
   "devDependencies": {
+    "@types/git-url-parse": "^9.0.1",
     "@types/node": "~20.3.3",
     "@types/semver": "~7.5.0",
     "husky": "~8.0.3",
+    "jsdoc": "~4.0.2",
+    "modern-jsdoc-template": "~1.0.0",
     "standard": "~17.1.0",
     "typescript": "~5.1.6"
   },

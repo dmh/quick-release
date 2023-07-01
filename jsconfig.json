@@ -9,7 +9,7 @@
     "moduleResolution": "nodenext",
     "baseUrl": "./",
     "paths": {
-        "#*": ["./lib/lib/*"]
+        "#*": ["./lib/*"]
     }
   },
   "include": ["lib/**/*", "bin/**/*"],
