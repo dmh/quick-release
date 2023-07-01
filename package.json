@@ -39,7 +39,7 @@
   ],
   "scripts": {
     "prepare": "husky install",
-    "lint-js": "standard -v 'lib/**/*.js' 'bin/**/*.js'",
+    "lint-js": "standard -v 'lib/**/*.js bin/**/*.js'",
     "check-js": "tsc -p jsconfig.json --maxNodeModuleJsDepth 0",
     "test": "npm run lint-js && npm run check-js",
     "docs": "jsdoc -c jsdoc.json"
@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "@types/git-url-parse": "^9.0.1",
+    "@types/minimist": "^1.2.2",
     "@types/node": "~20.3.3",
     "@types/semver": "~7.5.0",
     "husky": "~8.0.3",
