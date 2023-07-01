@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <link type="text/css" rel="stylesheet" href="styles/base.min.css">
+</head>
+
+<body class="body">
+
+    <div class="container">
+
+        <nav class="sidenav">
+            <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="CHANGELOG.html">CHANGELOG</a></li><li><a href="CHECK.html">CHECK</a></li><li><a href="COMMANDS.html">COMMANDS</a></li><li><a href="CONFIG.html">CONFIG</a></li><li><a href="GIT.html">GIT</a></li><li><a href="GITHUB.html">GITHUB</a></li><li><a href="PROMPTS.html">PROMPTS</a></li><li><a href="UTILS.html">UTILS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#collectLocalData">collectLocalData</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#parseArgs">parseArgs</a></li></ul>
+        </nav>
+
+        <main id="main" class="main">
+            <div id="content" class="content">
+                <h1 class="page-title">Home</h1>
+                
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section class="readme">
+        <article><h1 id="quick-release">Quick Release</h1>
+<blockquote>
+<p>Quick and easy generate and publish your application releases</p>
+</blockquote>
+<p><img src="https://user-images.githubusercontent.com/5150636/40185007-45664ba2-59fa-11e8-97dc-0aac781e8a49.png" alt="quick-release"></p>
+<h2 id="about">About</h2>
+<p>With <strong>quick-release</strong>, you can quickly generate your application release. Just install it and execute inside of the folder with your app/extension/plugin when you will be ready for new release. You will be able to do <strong>Local</strong>, <strong>Github</strong> or <strong>NPM</strong> release. Also, it will generate changelog for your new release based on <code>git log</code>. In every step, you will have all needed instructions and a possibility to stop if something goes wrong.</p>
+<h2 id="install">Install</h2>
+<pre class="prettyprint source lang-console"><code>npm install -g quick-release
+</code></pre>
+<h2 id="usage">Usage</h2>
+<pre class="prettyprint source lang-console"><code>  quick-release
+  or
+  quick-release [options]
+</code></pre>
+<h3 id="options">Options</h3>
+<pre class="prettyprint source lang-console"><code>-h, --help        - quick help
+-v, --version     - print the quick-release version.
+-l, --local       - Local Release.
+-g, --github      - Github Release.
+-n, --npm         - Github Release + NPM Release.
+</code></pre>
+<h2 id="release-types">Release types</h2>
+<ol>
+<li>
+<p><strong>Local release</strong> <code>quick-release -l</code></p>
+<p>Local release as a base for every type of releases. You can use it for your local repositories, or for repositories which are not stored on GitHub. It includes new release commit with a new tag and generates changelog file based on git log.</p>
+</li>
+<li>
+<p><strong>Github release</strong> <code>quick-release -g</code></p>
+<p>Local release + pushing all changes/new tag to Github + publishing release info based on changelog file into Github Releases tab.</p>
+</li>
+<li>
+<p><strong>NPM release</strong> <code>quick-release -n</code></p>
+<p>Github release + publishing NPM release</p>
+</li>
+</ol>
+<h2 id="changelog-generator">Changelog generator</h2>
+<p>Every release should consist of at least changelog and the fastest way to create it is to parse your <code>git log</code>. With <strong>quick-release</strong> it is easy to do, you just need to add prefixes to every commit which you want to see in the changelog. So the rule is: if git commit with prefix - goes to the changelog, without prefix - no. Also, you are able to mark commit as a breaking change with the prefix <code>[!!!]</code>.</p>
+<p>By default <strong>quick-release</strong> parsing only specific prefixes, but you are able to change them in <code>.qrconfig</code> file.</p>
+<h3 id="prefixes-by-default">Prefixes by default</h3>
+<pre class="prettyprint source lang-text"><code>[FEATURE], [FIX], [REFACTOR], [PERF], [DOC], [STYLE], [CHORE], [UPDATE], [TEST], [BUGFIX], [TASK], [CLEANUP], [WIP]
+</code></pre>
+<h3 id="prefix-to-mark-breaking-change">Prefix to mark breaking change</h3>
+<pre class="prettyprint source lang-text"><code>[!!!]
+</code></pre>
+<p><strong>Examples of git commits with prefixes:</strong></p>
+<pre class="prettyprint source lang-text"><code>'[TASK] change something which is not a feature or bugfix'
+'[FEATURE] add new feature'
+'[BUGFIX] fix bug'
+'[!!!][FEATURE] add a new feature which causing breaking change'
+</code></pre>
+<h2 id="quick-release-config-file-.qrconfig">Quick Release config file <code>.qrconfig</code></h2>
+<p>You can rewrite the default <strong>quick-release</strong> config. Just put <code>.qrconfig</code> at the root of your project and adapt config for your needs. <code>.qrconfig</code> file is always in first priority to default <strong>quick-release</strong> config.</p>
+<p>For now, you are able to change three types of configs in <strong>quick-release</strong>: <code>labels</code>, <code>changelogFile</code> and <code>breakingChangesTitle</code>.</p>
+<ul>
+<li><strong>labels</strong> - you can change/add new labels which will be parsed and added to the changelog for app release</li>
+<li><strong>changelogFile</strong> - you can change name of changelog file <em>(by default <code>CHANGELOG.md</code>)</em></li>
+<li><strong>breakingChangesTitle</strong> - you can change message to mark breaking changes in Github Releases tab <em>(by default <code>:heavy_exclamation_mark:**Breaking Changes:**</code>)</em></li>
+</ul>
+<h3 id="examle-of-grconfig-config-with-some-random-prefixes">Examle of <code>grconfig</code> config with some random prefixes</h3>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;labels&quot;: [&quot;[NEWPREFIX]&quot;, &quot;[IMPORTANT]&quot;, &quot;[TEST]&quot;, &quot;[ETC]&quot;],
+  &quot;changelogFile&quot;: &quot;CHANGELOG.md&quot;,
+  &quot;breakingChangesTitle&quot;: &quot;**Breaking Changes:**&quot;
+}
+</code></pre>
+<h3 id="examle-of-grconfig-file">Examle of <code>grconfig</code> file</h3>
+<p><a href="https://github.com/dmh/quick-release/blob/master/.qrconfig">.qrconfig</a></p>
+<h2 id="github-and-npm-authentication">Github and NPM authentication</h2>
+<blockquote>
+<p>For Github and NPM release you need authentication.</p>
+</blockquote>
+<h3 id="github-authentication">Github authentication</h3>
+<p>You need Github authentication to have the possibility to push changes and release info to Github. The easiest way is to use <code>ssh</code> link and Github token stored in <code>git config</code>. In this case, you will not need to enter your Github login and password. But if you are using <code>https</code> link or don't want to use Github token you always are able to use login and password in <strong>quick-release</strong> app.</p>
+<p><a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/">Github token</a></p>
+<h4 id="after-generating-github-token-save-it-in-your-.gitconfig-file">After generating Github token save it in your <code>.gitconfig</code> file</h4>
+<pre class="prettyprint source lang-text"><code>[github]
+  token = test1234test1234test1234...
+</code></pre>
+<h4 id="or%2C-if-you-are-keeping-your-.gitconfig-as-a-remote-repo%2C-you-can-create-new-file-.gitconfig.local-and-include-it-in-.gitconfig">Or, if you are keeping your <code>.gitconfig</code> as a remote repo, you can create new file <code>.gitconfig.local</code> and include it in <code>.gitconfig</code></h4>
+<h5 id=".gitconfig.local"><code>.gitconfig.local</code></h5>
+<pre class="prettyprint source lang-text"><code>[github]
+  token = test1234test1234test1234...
+</code></pre>
+<h5 id=".gitconfig"><code>.gitconfig</code></h5>
+<pre class="prettyprint source lang-text"><code>[include]
+  path = ~/.gitconfig.local
+</code></pre>
+<h3 id="npm-authentication">NPM authentication</h3>
+<p>You need NPM authentication to have the possibility to publish your plugin in NPM. <strong>quick-release</strong> will check if you already authorized in NPM and if not, you will get a notification that you need to verify your NPM user (<code>npm login</code>) and after that, you can run <code>quick-release</code> again and publish your plugin to NPM registry.</p>
+<hr>
+<h2 id="more-examples"><a href="https://github.com/dmh/quick-release/blob/master/gif.md">More examples</a></h2>
+<h2 id="license">License</h2>
+<p>MIT</p></article>
+    </section>
+
+
+
+
+
+
+            </div>
+
+            <div class="toc">
+                <h2>Table of contents</h2>
+                <div class="toc-nav"></div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a>
+        </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+    <script >
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.prettyprint.linenums code').forEach((el) => {
+                hljs.configure({
+                    languages: ['javascript'],
+                });
+                hljs.highlightElement(el);
+                hljs.lineNumbersBlock(el);
+            });
+            document.querySelectorAll('pre code').forEach((el) => {
+                hljs.configure({
+                    languages: ['javascript'],
+                });
+                hljs.highlightElement(el);
+            });
+        })
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.18.2/tocbot.min.js"></script>
+    <script>
+        tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.toc-nav',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.main article',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h1.name, h2.name, h3.name, h4.name',
+        headingLabelCallback: (string) => string
+    });
+    </script>
+</body>
+</html>

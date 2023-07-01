@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: git.js</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <link type="text/css" rel="stylesheet" href="styles/base.min.css">
+</head>
+
+<body class="body">
+
+    <div class="container">
+
+        <nav class="sidenav">
+            <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="CHANGELOG.html">CHANGELOG</a></li><li><a href="CHECK.html">CHECK</a></li><li><a href="COMMANDS.html">COMMANDS</a></li><li><a href="CONFIG.html">CONFIG</a></li><li><a href="GIT.html">GIT</a></li><li><a href="GITHUB.html">GITHUB</a></li><li><a href="PROMPTS.html">PROMPTS</a></li><li><a href="UTILS.html">UTILS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#collectLocalData">collectLocalData</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#parseArgs">parseArgs</a></li></ul>
+        </nav>
+
+        <main id="main" class="main">
+            <div id="content" class="content">
+                <h1 class="page-title">Source: git.js</h1>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import * as TYPES from '#types/types.js' // eslint-disable-line
+import gitUrlParse from 'git-url-parse'
+import ora from 'ora'
+import { $ } from 'execa'
+
+/**
+ * @ignore
+ * @typedef {TYPES.GIT_DATA} GIT_DATA {@link GIT_DATA}
+ * @typedef {TYPES.DATA} DATA {@link DATA}
+ * @typedef {TYPES.COMMIT_MESSAGE} COMMIT_MESSAGE {@link COMMIT_MESSAGE}
+ */
+
+/**
+ * #### Check is Git Repo
+ * @async
+ * @memberof GIT
+ * @returns {Promise&lt;boolean>}
+ */
+async function isRepo () {
+  try {
+    const isRepo = await $`git rev-parse --is-inside-work-tree`
+    if (isRepo.stdout === 'true') {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    return false
+  }
+}
+
+/**
+ * #### Check is Git root
+ * @async
+ * @memberof GIT
+ * @returns {Promise&lt;boolean>}
+ */
+async function isRoot () {
+  try {
+    const isGitdir = await $`git rev-parse --git-dir`
+    if (/^\.(git)?$/.test(isGitdir.stdout.trim())) {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    return false
+  }
+}
+
+/**
+ * #### Check is Git commits
+ * @async
+ * @memberof GIT
+ * @returns {Promise&lt;boolean>}
+ */
+async function isCommits () {
+  try {
+    const isCommits = await $`git rev-parse --all`
+    if (isCommits.stdout.trim() !== '') {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    return false
+  }
+}
+
+/**
+ * #### Check is Git tag in current commit
+ * @async
+ * @memberof GIT
+ * @returns {Promise&lt;boolean>}
+ */
+async function isTagInCurrentCommit () {
+  try {
+    const isTagInCurrentCommit = await $`git tag --contains`
+    if (isTagInCurrentCommit.stdout.trim() !== '') {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    return false
+  }
+}
+
+/**
+ * #### Check is Git Remote
+ * @async
+ * @private
+ * @memberof GIT
+ * @returns {Promise&lt;boolean>}
+ */
+async function isRemote () {
+  try {
+    const isRemote = await $`git remote`
+    if (isRemote.stdout.trim() !== '') {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    return false
+  }
+}
+
+/**
+ * #### Check is Git branch detached
+ * @async
+ * @private
+ * @memberof GIT
+ * @returns {Promise&lt;boolean>}
+ */
+async function isBranchDetached () {
+  try {
+    const statusData = await status()
+    if (statusData &amp;&amp; /\(no branch\)/.test(statusData)) {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    return false
+  }
+}
+
+/**
+ * #### Check is Git branch ahead
+ * @async
+ * @private
+ * @memberof GIT
+ * @returns {Promise&lt;boolean>}
+ */
+async function isBranchAhead () {
+  try {
+    const statusData = await status()
+    if (statusData &amp;&amp; /ahead (\d+)/.exec(statusData) !== null) {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    return false
+  }
+}
+
+/**
+ * #### Check is Git behind
+ * @async
+ * @private
+ * @memberof GIT
+ * @returns {Promise&lt;boolean>}
+ */
+async function isBranchBehind () {
+  try {
+    const statusData = await status()
+    if (statusData &amp;&amp; /behind (\d+)/.exec(statusData) !== null) {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    return false
+  }
+}
+
+/**
+ * #### save git hash
+ * @async
+ * @private
+ * @memberof GIT
+ * @returns {Promise&lt;string>}
+ */
+async function hash () {
+  try {
+    const hash = await $`git rev-parse --short HEAD`
+    if (hash.stdout.trim() !== '') {
+      return hash.stdout.trim()
+    } else {
+      return ''
+    }
+  } catch (error) {
+    return ''
+  }
+}
+
+/**
+ * #### save git branch
+ * @async
+ * @private
+ * @memberof GIT
+ * @returns {Promise&lt;string>}
+ */
+async function branch () {
+  try {
+    const branch = await $`git rev-parse --abbrev-ref HEAD`
+    if (branch.stdout.trim() !== '') {
+      return branch.stdout.trim()
+    } else {
+      return ''
+    }
+  } catch (error) {
+    return ''
+  }
+}
+
+/**
+ * #### save last git tag
+ * @async
+ * @private
+ * @memberof GIT
+ * @returns {Promise&lt;string>}
+ */
+async function lastTag () {
+  try {
+    const lastTag = await $`git describe --abbrev=0 --tags`
+    if (lastTag.stdout.trim() !== '') {
+      return lastTag.stdout.trim()
+    } else {
+      return ''
+    }
+  } catch (error) {
+    return ''
+  }
+}
+
+/**
+ * #### save git status
+ * @async
+ * @private
+ * @memberof GIT
+ * @returns {Promise&lt;string>}
+ */
+async function status () {
+  try {
+    const status = await $`git status --porcelain -b -u --null`
+    // trim and remove \x00
+    // eslint-disable-next-line no-control-regex
+    const statusData = status.stdout.trim().replace(/\x00/g, '')
+    if (statusData !== '') {
+      return statusData
+    } else {
+      return ''
+    }
+  } catch (error) {
+    return ''
+  }
+}
+
+/**
+ * #### Save git branch upstream
+ * @async
+ * @private
+ * @memberof GIT
+ * @returns {Promise&lt;string>}
+ */
+async function branchUpstream () {
+  try {
+    /** @type {string} */
+    const branchName = await branch()
+    const branchUpstream = await $`git rev-parse --abbrev-ref ${branchName}@{u}`
+    if (branchUpstream.stdout) {
+      return branchUpstream.stdout.trim()
+    } else {
+      return ''
+    }
+  } catch (error) {
+    return ''
+  }
+}
+
+/**
+ * #### save staged files
+ * @async
+ * @memberof GIT
+ * @returns {Promise&lt;Array&lt;string>>} staged files array or false
+ */
+async function stagedFiles () {
+  try {
+    const stagedFiles = await $`git diff --name-only --cached`
+    if (stagedFiles.stdout.trim() !== '') {
+      return stagedFiles.stdout.trim().split('\n')
+    } else {
+      return []
+    }
+  } catch (error) {
+    return []
+  }
+}
+
+/**
+ * #### save changed files
+ * @async
+ * @memberof GIT
+ * @returns {Promise&lt;Array&lt;string>>} staged files array or false
+ */
+async function changedFiles () {
+  try {
+    const stagedFiles = await $`git diff --name-only`
+    if (stagedFiles.stdout.trim() !== '') {
+      return stagedFiles.stdout.trim().split('\n')
+    } else {
+      return []
+    }
+  } catch (error) {
+    return []
+  }
+}
+
+/**
+ * #### save git origin remote info
+ * @async
+ * @private
+ * @memberof GIT
+ * @returns {Promise&lt;Object>}
+ */
+async function remote () {
+  try {
+    const remoteUrl = await $`git remote get-url origin`
+    const parseremote = gitUrlParse(remoteUrl.stdout.trim())
+    if (parseremote) {
+      return parseremote
+    } else {
+      return {}
+    }
+  } catch (error) {
+    return {}
+  }
+}
+
+/**
+ * #### Genereta git info
+ * @async
+ * @memberof GIT
+ * @returns {Promise&lt;GIT_DATA>}
+ */
+async function gitData () {
+  /** @type {GIT_DATA} */
+  const git = {
+    isRepo: false,
+    isRoot: false,
+    isCommits: false,
+    isTagInCurrentCommit: false,
+    isRemote: false,
+    isBranchDetached: false,
+    isBranchAhead: false,
+    isBranchBehind: false,
+    hash: '',
+    branch: '',
+    lastTag: '',
+    status: '',
+    log: [],
+    branchUpstream: '',
+    stagedFiles: [],
+    changedFiles: [],
+    remote: {}
+  }
+
+  git.isRepo = await isRepo()
+  if (git.isRepo) {
+    git.isRoot = await isRoot()
+  }
+  if (git.isRepo &amp;&amp; git.isRoot) {
+    git.isCommits = await isCommits()
+
+    if (git.isCommits &amp;&amp; !git.isTagInCurrentCommit) {
+      git.isRemote = await isRemote()
+      git.hash = await hash()
+      git.branch = await branch()
+      git.lastTag = await lastTag()
+      git.status = await status()
+      git.branchUpstream = await branchUpstream()
+      git.stagedFiles = await stagedFiles()
+      git.changedFiles = await changedFiles()
+
+      if (git.isRemote) {
+        git.remote = await remote()
+        git.isBranchDetached = await isBranchDetached()
+        git.isBranchAhead = await isBranchAhead()
+        git.isBranchBehind = await isBranchBehind()
+      }
+    }
+  }
+  return git
+}
+
+/**
+ * #### git remote update
+ * @async
+ * @private
+ * @memberof GIT
+ * @returns undefined
+ */
+async function gitRemoteUpdate () {
+  const spinner = ora('Sync remote repo with local').start()
+  try {
+    await $`git remote update`
+    spinner.succeed()
+  } catch (error) {
+    spinner.fail()
+    console.error(error)
+  }
+}
+
+/**
+ * #### update git remote data
+ * @async
+ * @memberof GIT
+ * @param {DATA} data - data object
+ * @returns {Promise&lt;DATA>} local data
+ */
+async function gitRemoteDataUpdate (data) {
+  if (data.git.isRemote) {
+    await gitRemoteUpdate()
+    data.git.isBranchDetached = await isBranchDetached()
+    data.git.isBranchAhead = await isBranchAhead()
+    data.git.isBranchBehind = await isBranchBehind()
+  }
+  return data
+}
+
+/**
+ * #### git add files
+ * @async
+ * @memberof GIT
+ * @param {Array&lt;string>} files - files to git add
+ * @returns undefined
+ */
+async function gitAdd (files) {
+  try {
+    if (files.length > 0) {
+      for await (const file of files) {
+        await $`git add ${file}`
+      }
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+/**
+ * #### git commit release
+ * @async
+ * @memberof GIT
+ * @param {string} msg - commit message
+ * @returns undefined
+ */
+async function gitCommit (msg) {
+  const spinner = ora('Commit release').start()
+  try {
+    await $`git commit -m ${msg}`
+    spinner.succeed()
+  } catch (error) {
+    spinner.fail()
+    console.error(error)
+  }
+}
+
+/**
+ * #### git push to remote
+ * @async
+ * @memberof GIT
+
+ * @returns undefined
+ */
+async function gitPush () {
+  const spinner = ora('Push to remote').start()
+  try {
+    await $`git push`
+    spinner.succeed()
+  } catch (error) {
+    spinner.fail()
+    console.error(error)
+  }
+}
+
+/**
+ * #### git tag
+ * @async
+ * @memberof GIT
+ * @param {string} tag - tag
+ * @returns undefined
+ */
+async function gitTag (tag) {
+  try {
+    await $`git tag ${tag}`
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+/**
+ * #### git push tag to remote
+ * @async
+ * @memberof GIT
+ * @returns undefined
+ */
+async function gitPushTag () {
+  const spinner = ora('Push tag to remote').start()
+  try {
+    await $`git push --tags`
+    spinner.succeed()
+  } catch (error) {
+    spinner.fail()
+    console.error(error)
+  }
+}
+
+/**
+ * #### git log
+ * parse git log and use it to generate changelog
+ * @async
+ * @private
+ * @memberof GIT
+ * @param {DATA} data - data object
+ * @returns {Promise&lt;string[]>} log array
+ */
+async function gitLog (data) {
+  let lastTag = 'HEAD'
+  if (data.git.lastTag !== '') {
+    lastTag = `${data.git.lastTag}..HEAD`
+  }
+  /** @type {Array&lt;string>} */
+  let log = []
+  try {
+    const { stdout } = await $`git log ${lastTag} --format=%s#@sep@#%an#@sep@#%h#@sep@#%aI`
+    if (stdout !== '') {
+      log = stdout.split('\n')
+    }
+    return log
+  } catch (error) {
+    return log
+  }
+}
+
+/**
+ * #### parse git log and return each commit message as object with changelog properties
+ * @private
+ * @memberof GIT
+ * @param {string} commit - commit message
+ * @returns {COMMIT_MESSAGE} portal name|names
+ */
+function parseCommit (commit) {
+  const commitArray = commit.split('#@sep@#')
+  const prefix = ''
+  const message = commitArray[0].trim()
+  const name = commitArray[1].trim()
+  const hash = commitArray[2].trim()
+  const date = commitArray[3].trim()
+  return { commit, prefix, message, hash, name, date }
+}
+
+/**
+ * #### parse and save git log
+ * @async
+ * @memberof GIT
+ * @param {DATA} data - data object
+ * @returns undefined
+ */
+async function saveGitlog (data) {
+  /** @type {Array&lt;COMMIT_MESSAGE>} */
+  const gitLogData = []
+  const logs = await gitLog(data)
+  if (logs.length > 0) {
+    logs.forEach((logItem) => {
+      gitLogData.push(parseCommit(logItem))
+    })
+  }
+  data.git.log = gitLogData
+}
+
+export {
+  isRepo,
+  isRoot,
+  isCommits,
+  isTagInCurrentCommit,
+  stagedFiles,
+  changedFiles,
+  gitData,
+  gitRemoteDataUpdate,
+  gitAdd,
+  gitCommit,
+  gitPush,
+  gitTag,
+  gitPushTag,
+  saveGitlog
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+
+            <div class="toc">
+                <h2>Table of contents</h2>
+                <div class="toc-nav"></div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a>
+        </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+    <script >
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.prettyprint.linenums code').forEach((el) => {
+                hljs.configure({
+                    languages: ['javascript'],
+                });
+                hljs.highlightElement(el);
+                hljs.lineNumbersBlock(el);
+            });
+            document.querySelectorAll('pre code').forEach((el) => {
+                hljs.configure({
+                    languages: ['javascript'],
+                });
+                hljs.highlightElement(el);
+            });
+        })
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.18.2/tocbot.min.js"></script>
+    <script>
+        tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.toc-nav',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.main article',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h1.name, h2.name, h3.name, h4.name',
+        headingLabelCallback: (string) => string
+    });
+    </script>
+</body>
+</html>

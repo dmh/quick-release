@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: utils/fs.js</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <link type="text/css" rel="stylesheet" href="styles/base.min.css">
+</head>
+
+<body class="body">
+
+    <div class="container">
+
+        <nav class="sidenav">
+            <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="CHANGELOG.html">CHANGELOG</a></li><li><a href="CHECK.html">CHECK</a></li><li><a href="COMMANDS.html">COMMANDS</a></li><li><a href="CONFIG.html">CONFIG</a></li><li><a href="GIT.html">GIT</a></li><li><a href="GITHUB.html">GITHUB</a></li><li><a href="PROMPTS.html">PROMPTS</a></li><li><a href="UTILS.html">UTILS</a></li></ul><h3>Global</h3><ul><li><a href="global.html#collectLocalData">collectLocalData</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#parseArgs">parseArgs</a></li></ul>
+        </nav>
+
+        <main id="main" class="main">
+            <div id="content" class="content">
+                <h1 class="page-title">Source: utils/fs.js</h1>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import * as TYPES from '#types/types.js' // eslint-disable-line
+import fsPromises from 'node:fs/promises'
+import path from 'node:path'
+import chalk from 'chalk'
+import url from 'node:url'
+import editorconfig from 'editorconfig'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+
+/**
+ * @ignore
+ * @typedef {TYPES.CLI_PACKAGE_JSON} CLI_PACKAGE_JSON {@link CLI_PACKAGE_JSON}
+ * @typedef {TYPES.DATA} DATA {@link DATA}
+ * @typedef {TYPES.JSON_WITH_FORMATING} JSON_WITH_FORMATING {@link JSON_WITH_FORMATING}
+ * @typedef {TYPES.JSON_FORMATING_INFO} JSON_FORMATING_INFO {@link JSON_FORMATING_INFO}
+ */
+
+/**
+ * #### check if file/dir exists
+ * @async
+ * @memberof UTILS
+ * @param {string} path - file/dir path
+ * @returns {Promise&lt;boolean>}
+ */
+async function isFileDirExists (path) {
+  try {
+    await fsPromises.stat(path)
+    return true
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return false
+    }
+    throw new Error(error)
+  }
+}
+
+/**
+ * #### parse CLI package.json
+ * @async
+ * @memberof UTILS
+ * @returns {Promise&lt;CLI_PACKAGE_JSON>} cli package.json
+ */
+async function parseCliPackageJson () {
+  const filePath = path.resolve(url.fileURLToPath(import.meta.url), '../../../package.json')
+  const packageJsonFile = require(filePath)
+  return packageJsonFile
+}
+
+/**
+ * #### get file formating info with editorconfig helper
+ * @private
+ * @async
+ * @memberof UTILS
+ * @param {string} filePath - file path
+ * @returns {Promise&lt;JSON_FORMATING_INFO>} portal name|names
+ */
+async function getEditorConfigFormat (filePath) {
+  const jsonFormat = await editorconfig.parse(filePath)
+  /** @type {JSON_FORMATING_INFO} */
+  const format = {
+    space: 2,
+    newline: ''
+  }
+  if (jsonFormat.indent_style === 'tab') {
+    format.space = '\t'
+  } else if (jsonFormat.indent_style === 'space') {
+    format.space = jsonFormat.indent_size
+  }
+  if (jsonFormat.insert_final_newline) {
+    format.newline = '\n'
+  }
+  return format
+}
+
+/**
+ * #### Read JSON file with formating info
+ * @async
+ * @memberof UTILS
+ * @param {string} filePath - file path
+ * @returns {Promise&lt;JSON_WITH_FORMATING|false>} quickrelease.json config
+ */
+async function readJsonWithFormat (filePath) {
+  const file = path.parse(filePath)
+  if (file.ext === '.json') {
+    const isFileExists = await isFileDirExists(filePath)
+    if (isFileExists) {
+      try {
+        const data = require(filePath)
+        const format = await getEditorConfigFormat(filePath)
+        return {
+          data,
+          format
+        }
+      } catch (error) {
+        console.warn(`${chalk.red('Warning:')} ${chalk.green(file.base)} file empty or not valid JSON\n`)
+        return false
+      }
+    }
+  }
+  return false
+}
+
+/**
+ * #### write new version data to JSON files
+ * @async
+ * @memberof UTILS
+ * @param {DATA} data - data object
+ * @returns undefined
+ */
+async function updateVersionInFiles (data) {
+  if (data.config.files.length > 0 &amp;&amp; data.answers.releaseVersion) {
+    for await (const file of data.config.files) {
+      if (file !== 'package-lock.json') {
+        const filePath = path.resolve('.', file)
+        /** @type {JSON_WITH_FORMATING|false} */
+        const jsonFile = await readJsonWithFormat(filePath)
+        if (jsonFile &amp;&amp; jsonFile.data) {
+          if (jsonFile.data.version) {
+            jsonFile.data.version = data.answers.releaseVersion
+            await fsPromises.writeFile(
+              filePath,
+              JSON.stringify(jsonFile.data, null, jsonFile.format.space) + jsonFile.format.newline,
+              { encoding: 'utf8' }
+            )
+          } else {
+            console.warn(`${chalk.red('Warning:')} ${chalk.green(file)} file does not have version property and will not be updated to a new version.\n`)
+            // remove file from from config.files
+            data.config.files = data.config.files.filter((item) => item !== file)
+          }
+        }
+      }
+    }
+  }
+}
+
+export { isFileDirExists, parseCliPackageJson, updateVersionInFiles, readJsonWithFormat }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+
+            <div class="toc">
+                <h2>Table of contents</h2>
+                <div class="toc-nav"></div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a>
+        </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+    <script >
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.prettyprint.linenums code').forEach((el) => {
+                hljs.configure({
+                    languages: ['javascript'],
+                });
+                hljs.highlightElement(el);
+                hljs.lineNumbersBlock(el);
+            });
+            document.querySelectorAll('pre code').forEach((el) => {
+                hljs.configure({
+                    languages: ['javascript'],
+                });
+                hljs.highlightElement(el);
+            });
+        })
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.18.2/tocbot.min.js"></script>
+    <script>
+        tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.toc-nav',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.main article',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h1.name, h2.name, h3.name, h4.name',
+        headingLabelCallback: (string) => string
+    });
+    </script>
+</body>
+</html>
