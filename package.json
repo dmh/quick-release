@@ -48,22 +48,22 @@
     "#*": "./lib/*"
   },
   "dependencies": {
-    "@inquirer/prompts": "2.2.0",
-    "@octokit/request": "7.0.1",
+    "@inquirer/prompts": "2.3.0",
+    "@octokit/request": "8.0.2",
     "chalk": "5.3.0",
     "dotenv": "16.3.1",
-    "editorconfig": "1.0.3",
+    "editorconfig": "2.0.0",
     "execa": "7.1.1",
     "git-url-parse": "13.1.0",
     "is-online": "10.0.0",
     "minimist": "1.2.8",
     "ora": "6.3.1",
-    "semver": "7.5.3"
+    "semver": "7.5.4"
   },
   "devDependencies": {
     "@types/git-url-parse": "^9.0.1",
     "@types/minimist": "^1.2.2",
-    "@types/node": "~20.3.3",
+    "@types/node": "~20.4.1",
     "@types/semver": "~7.5.0",
     "husky": "~8.0.3",
     "jsdoc": "~4.0.2",
