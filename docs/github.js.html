@@ -188,6 +188,7 @@ function saveGithubReleaseNotes (data) {
       })
     }
   } else {
+    githubCommits.shift()
     githubCommits.forEach((item, index) => {
       item.message = item.message.charAt(0).toUpperCase() + item.message.slice(1)
       generic += `* ${item.message} @${item.name} ${item.hash}\n`
