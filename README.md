@@ -2,7 +2,7 @@
 **Quick and easy generate and publish your App/Repo releases**
 
 [![Run tests](https://github.com/dmh/quick-release/actions/workflows/test.yml/badge.svg)](https://github.com/dmh/quick-release/actions/workflows/test.yml)
-![node-current](https://img.shields.io/node/v/dmh/quick-release)
+![node-current](https://img.shields.io/node/v/quick-release)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 ![JSDoc](https://img.shields.io/badge/API\%20documentation-JSDoc-yellow)
 
