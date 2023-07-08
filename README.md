@@ -1,142 +1,230 @@
-# Quick Release
+# quick-release
+**Quick and easy generate and publish your App/Repo releases**
 
-> Quick and easy generate and publish your application releases
+[![Run tests](https://github.com/dmh/quick-release/actions/workflows/test.yml/badge.svg)](https://github.com/dmh/quick-release/actions/workflows/test.yml)
+![node-current](https://img.shields.io/node/v/dmh/quick-release)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+![JSDoc](https://img.shields.io/badge/API\%20documentation-JSDoc-yellow)
 
-![quick-release](https://user-images.githubusercontent.com/5150636/40185007-45664ba2-59fa-11e8-97dc-0aac781e8a49.png)
+[**Documentation**](http://dmh.github.io/quick-release/)
 
-## About
+## Table of contents
 
-With **quick-release**, you can quickly generate your application release. Just install it and execute inside of the folder with your app/extension/plugin when you will be ready for new release. You will be able to do **Local**, **Github** or **NPM** release. Also, it will generate changelog for your new release based on `git log`. In every step, you will have all needed instructions and a possibility to stop if something goes wrong.
+* [Why?](#why)
+* [Main features](#main-features)
+* [Quick start](#quick-start)
+* [Release types](#release-types)
+* [Changelog generation](#changelog-generation)
+* [GitHub Release Notes generation](#gitHub-release-notes-generation)
+* [Quick Release custom config](#quick-release-custom-config)
+  * [Default settings](#default_settings)
+  * [Custom settings example #1](#custom_settings_example_1)
+  * [Custom settings example #2](#custom_settings_example_2)
+* [Contributing](#contributing)
+* [Changelog](CHANGELOG.md)
 
-## Install
 
-```console
+## Why?
+* To automate recurring and routine operations and steps to create a release. In this scenario, **"release"** refers to a `git` release that follows a semantic versioning guidelines.
+* To have the possibility to generate **Changelog notes** based on the `git log` and save them to a markdown file as a part of the release commit.
+* To have the possibility to generate **GitHub Release Notes** based on a remote GitHub commit log and publish it as a part of the GitHub release.
+* Perform all the steps above `locally` rather than as a CI step, for greater control over what to include in the release.
+
+## Main features
+* Create a release by answering a few questions in seconds.
+* Two release types: **local** and **remote**.
+* Lot of checks to prevent any possible problems with the release.
+* Generate a new release commit with a new tag.
+* Push all changes/new tag to remote repository.
+* Generate **Changelog**
+* Generate **GitHub Release Notes**
+* Perform all release steps locally with full control.
+* Possibility to stop if something goes wrong.
+* Flexible configuration options based on a config file `quickrelease.json`
+
+## Quick start
+
+
+1. Install **quick-release** globally
+```bash
 npm install -g quick-release
 ```
+2. Open the folder with your project and run command below to start release process
 
-## Usage
+```bash
+quick-release
+```
+or alias
 
-```console
-  quick-release
-  or
-  quick-release [options]
+```bash
+qr
 ```
 
-### Options
-
-```console
--h, --help        - quick help
--v, --version     - print the quick-release version.
--l, --local       - Local Release.
--g, --github      - Github Release.
--n, --npm         - Github Release + NPM Release.
-```
+**Other options**
+|Options||
+| ------ | ---- |
+| `-v` , `--version` | Print version information and quit |
+| `-h` , `--help` | Print help information and quit |
+| `-i` , `--info` | Print projected information for a new potential release and quit |
+| `-d` , `--debug` | Print additional debug information during the release process |
 
 ## Release types
 
- 1. **Local release** `quick-release -l`
+ * **Local release**
 
-    Local release as a base for every type of releases. You can use it for your local repositories, or for repositories which are not stored on GitHub. It includes new release commit with a new tag and generates changelog file based on git log.
- 2. **Github release** `quick-release -g`
+    A local release is the basis for every `git-based` release type. It includes a new release commit with a new tag and generated changelog notes that are added to markdown file on demand.
+ * **Remote release**
 
-    Local release + pushing all changes/new tag to Github + publishing release info based on changelog file into Github Releases tab.
+    A local release as a base, as well as pushing a tagged release commit to a remote repository. Additionally, there is an option to create and publish a GitHub Release with notes.
 
- 3. **NPM release** `quick-release -n`
+## Changelog generation
+**Changelog list** is a feature that allows you to generate a changelog based on the `git log` and publish it to a markdown file `CHANGELOG.md` as a part of the release commit. With additional options, you can also filter and separate changelog notes by generic and breaking changes. This is an `optional step` that can be skipped during the release process.
 
-    Github release + publishing NPM release
 
-## Changelog generator
-
-Every release should consist of at least changelog and the fastest way to create it is to parse your `git log`. With **quick-release** it is easy to do, you just need to add prefixes to every commit which you want to see in the changelog. So the rule is: if git commit with prefix - goes to the changelog, without prefix - no. Also, you are able to mark commit as a breaking change with the prefix `[!!!]`.
-
-By default **quick-release** parsing only specific prefixes, but you are able to change them in `.qrconfig` file.
-
-### Prefixes by default
-
-```text
-[FEATURE], [FIX], [REFACTOR], [PERF], [DOC], [STYLE], [CHORE], [UPDATE], [TEST], [BUGFIX], [TASK], [CLEANUP], [WIP]
+## GitHub Release Notes generation
+**GitHub Release Notes** is a feature that allows you to generate a release note based on a remote GitHub commit log and publish it as a part of the GitHub release. With additional options, you can also sepparate notes by purpose (breaking changes, features, bugfixes, etc.) and add a custom header to each section. This is an `optional step` that can be skipped during the release process.
+### Requirements
+To publish **GitHub Release Notes**, it is necessary to include a GitHub fine-grained personal access token with `Contents` read and write repository permission in the `.env` file.
+```bash
+GITHUB_TOKEN=your_token
 ```
 
-### Prefix to mark breaking change
+## Quick Release custom config
 
-```text
-[!!!]
-```
+To customize your **quick-release** settings, simply add a `quickrelease.json` configuration file to the root of your project and adjust the configurations to meet your needs.
 
-**Examples of git commits with prefixes:**
-
-```text
-'[TASK] change something which is not a feature or bugfix'
-'[FEATURE] add new feature'
-'[BUGFIX] fix bug'
-'[!!!][FEATURE] add a new feature which causing breaking change'
-```
-
-## Quick Release config file `.qrconfig`
-
-You can rewrite the default **quick-release** config. Just put `.qrconfig` at the root of your project and adapt config for your needs. `.qrconfig` file is always in first priority to default **quick-release** config.
-
-For now, you are able to change three types of configs in **quick-release**: `labels`, `changelogFile` and `breakingChangesTitle`.
-
-- **labels** - you can change/add new labels which will be parsed and added to the changelog for app release
-- **changelogFile** - you can change name of changelog file _(by default `CHANGELOG.md`)_
-- **breakingChangesTitle** - you can change message to mark breaking changes in Github Releases tab _(by default `:heavy_exclamation_mark:**Breaking Changes:**`)_
-
-### Examle of `grconfig` config with some random prefixes
-
-```json
-{
-  "labels": ["[NEWPREFIX]", "[IMPORTANT]", "[TEST]", "[ETC]"],
-  "changelogFile": "CHANGELOG.md",
-  "breakingChangesTitle": "**Breaking Changes:**"
-}
-```
-
-### Examle of `grconfig` file
-
-[.qrconfig](https://github.com/dmh/quick-release/blob/master/.qrconfig)
-
-## Github and NPM authentication
-
-> For Github and NPM release you need authentication.
-
-### Github authentication
-
-You need Github authentication to have the possibility to push changes and release info to Github. The easiest way is to use `ssh` link and Github token stored in `git config`. In this case, you will not need to enter your Github login and password. But if you are using `https` link or don't want to use Github token you always are able to use login and password in **quick-release** app.
-
-[Github token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/)
-
-#### After generating Github token save it in your `.gitconfig` file
-
-```text
-[github]
-  token = test1234test1234test1234...
-```
-
-#### Or, if you are keeping your `.gitconfig` as a remote repo, you can create new file `.gitconfig.local` and include it in `.gitconfig`
-
-##### `.gitconfig.local`
-
-```text
-[github]
-  token = test1234test1234test1234...
-```
-
-##### `.gitconfig`
-
-```text
-[include]
-  path = ~/.gitconfig.local
-```
-
-### NPM authentication
-
-You need NPM authentication to have the possibility to publish your plugin in NPM. **quick-release** will check if you already authorized in NPM and if not, you will get a notification that you need to verify your NPM user (`npm login`) and after that, you can run `quick-release` again and publish your plugin to NPM registry.
+### `quickrelease.json` options
+| Option | Default | Description |
+| ------ | ---- | ----------- |
+| `files` | `package.json,package-lock.json` | Additional `.json` files to parse, update version, and include into release |
+| `changelog.file` | `CHANGELOG.md` | Changelog file name |
+| `changelog.labels` | | Git commit labels/prefixes to use for building and filtering changelog notes |
+| `changelog.breakingLabel` | | Label/prefix to indicate breaking changes in git log |
+| `githubReleaseTitles` | | Github Release Notes titles |
 
 ***
 
-## [More examples](https://github.com/dmh/quick-release/blob/master/gif.md)
+### Default settings
+In case your project lacks a `quickrelease.json` config file, default settings will be utilized.
+* `package.json` and `package-lock.json` files, if present, will be updated with the new version and included in the release commit.
+* `CHANGELOG.md` file will be created if it does not exist. `Optional`
+  * All `git log` messages will be included in the changelog.
+  * No separation in the changelog into **generic** and **breaking** changes
+* All GitHub commit log messages will be included as changelist for **GitHub Release Notes**. `Optional`
 
-## License
+#### git-log example
+```git
+[!!!] breaking change commit message
+[FEATURE] new feature commit message
+unimportant commit message
+[BUGFIX] bug fix commit message
+[!!!] breaking change commit message
+[DOC] documentation update commit message
+unimportant commit message
+[FEATURE] new feature commit message
+initial commit
+```
 
-MIT
+#### `CHANGELOG.md` example based on git-log above with default settings
+>### v1.0.0 `July 4, 2023`
+>* [!!!] breaking change commit message [`af1a8a2`](#) (author_name)
+>* [FEATURE] new feature commit message [`30c13f6`](#) (author_name)
+>* unimportant commit message [`676d50e`](#) (author_name)
+>* [BUGFIX] bug fix commit message [`1cc492f`](#) (author_name)
+>* [!!!] breaking change commit message. [`1f081e1`](#) (author_name)
+>* [DOC] documentation update commit message [`6ebb7ed`](#) (author_name)
+>* unimportant commit message [`1418533`](#) (author_name)
+>* [FEATURE] new feature commit message. [`fa36968`](#) (author_name)
+>* initial commit [`7821b3c`](#) (author_name)
+
+#### GitHub Release Notes example based on git-log above with default settings
+
+
+***
+
+### Custom settings example #1
+#### `quickrelease.json`
+```json
+{
+  "changelog": {
+    "labels": ["[FEATURE]","[BUGFIX]","[TASK]","[DOC]","[TEST]"],
+    "breakingLabel": "[!!!]"
+  },
+  "githubReleaseTitles": ["New Features", "Bugfixes", "General", "Documentation", "Tests"]
+}
+```
+#### git-log example
+```git
+[!!!] breaking change commit message
+[FEATURE] new feature commit message
+unimportant commit message
+[BUGFIX] bug fix commit message
+[!!!] breaking change commit message
+[DOC] documentation update commit message
+unimportant commit message
+[FEATURE] new feature commit message
+initial commit
+```
+
+#### `CHANGELOG.md` example based on git-log above with custom settings #1
+>### v1.0.0 `July 4, 2023`
+>* **[FEATURE]** new feature commit message [`30c13f6`](#) (author_name)
+>* **[BUGFIX]** bug fix commit message [`1cc492f`](#) (author_name)
+>* **[DOC]** documentation update commit message [`6ebb7ed`](#) (author_name)
+>* **[FEATURE]** new feature commit message [`fa36968`](#) (author_name)
+>
+>#### Breaking Changes
+>* **[!!!]** breaking change commit message [`af1a8a2`](#) (author_name)
+>* **[!!!]** breaking change commit message [`1f081e1`](#) (author_name)
+
+#### GitHub Release Notes example based on git-log above with custom settings #1
+
+***
+
+### Custom settings example #2
+#### `quickrelease.json`
+```json
+{
+  "files": ["app.json"],
+  "changelog": {
+    "labels": ["feat:","fix:","docs:"],
+    "breakingLabel": "BREAKING CHANGE:"
+  },
+  "githubReleaseTitles": ["New Features", "Bugfixes", "Documentation"]
+}
+```
+
+#### git-log example
+```git
+BREAKING CHANGE: breaking change commit message
+feat: new feature commit message
+unimportant commit message
+fix: bug fix commit message
+BREAKING CHANGE: breaking change commit message
+docs: documentation update commit message
+unimportant commit message
+feat: new feature commit message
+initial commit
+```
+
+#### `CHANGELOG.md` example based on git-log above with custom settings #2
+>### v1.0.0 `July 4, 2023`
+>* **feat:** new feature commit message [`30c13f6`](#) (author_name)
+>* **fix:** bug fix commit message [`1cc492f`](#) (author_name)
+>* **docs:** documentation update commit message [`6ebb7ed`](#) (author_name)
+>* **feat:** new feature commit message [`fa36968`](#) (author_name)
+>
+>#### Breaking Changes
+>* **BREAKING CHANGE:** breaking change commit message [`af1a8a2`](#) (author_name)
+>* **BREAKING CHANGE:** breaking change commit message [`1f081e1`](#) (author_name)
+
+#### GitHub Release Notes example based on git-log above with custom settings #2
+
+***
+
+## Contributing
+1. Clone the repository and run `npm link` to install dependencies and create a symlink to the global `node_modules` folder.
+2. Now you can run `quick-release` command from any folder to test your changes.
+3. Add your changes to repository.
+4. Run `npm test` to run tests.
+5. Commit your changes and create a pull request.
