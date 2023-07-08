@@ -1,3 +1,23 @@
+### v3.0.0 `July 8, 2023`
+* **[DOC]** update README.md, add screenshots [`82c4f51`](https://github.com/dmh/quick-release/commit/82c4f51) (Dmytro Hrynevych)
+* **[DOC]** update readme to match the documentation with the new version [`0361952`](https://github.com/dmh/quick-release/commit/0361952) (dmh)
+* **[DOC]** add jsdoc documentation [`e93a1a6`](https://github.com/dmh/quick-release/commit/e93a1a6) (dmh)
+* **[TEST]** update git hooks - add test and docs generation, update git commit msg checks for github actions [`09fa3d5`](https://github.com/dmh/quick-release/commit/09fa3d5) (dmh)
+* **[TASK]** change lib folder structure, remove old files, use ES6 modules [`c6ac040`](https://github.com/dmh/quick-release/commit/c6ac040) (dmh)
+* **[TASK]** add checkIfCommitHasTag check, update npm dep-s, use @octokit/request instead of @octokit/core, update parse fn-s, general refactor [`2896aca`](https://github.com/dmh/quick-release/commit/2896aca) (dmh)
+* **[TASK]** add publishGithubRelease task, update jsdoc spec, refactor, cleanup [`81c321b`](https://github.com/dmh/quick-release/commit/81c321b) (dmh)
+* **[TASK]** add github release task, general refactoring [`2710bfe`](https://github.com/dmh/quick-release/commit/2710bfe) (dmh)
+* **[TASK]** add generate Changelog data step [`01138b6`](https://github.com/dmh/quick-release/commit/01138b6) (dmh)
+* **[TASK]** add new steps to local release, updateVersionInFiles, installNpmDeps and gitAdd [`87bf85c`](https://github.com/dmh/quick-release/commit/87bf85c) (dmh)
+* **[TASK]** add subpath mapped imports, update npm deps [`78b7cb3`](https://github.com/dmh/quick-release/commit/78b7cb3) (dmh)
+* **[TASK]** improve error and warning msg-s [`6d77d56`](https://github.com/dmh/quick-release/commit/6d77d56) (dmh)
+* **[TASK]** update npm deps, add parse quickreleaseConfi.json fn, add more jsdoc namespaces, refactor git fn-s [`c27bdf7`](https://github.com/dmh/quick-release/commit/c27bdf7) (dmh)
+* **[TASK]** new major version, general refactoring, update logic, update deps [`4c80d33`](https://github.com/dmh/quick-release/commit/4c80d33) (dmh)
+* **[TASK]** add jsconfig and jsdoc config [`d41ce54`](https://github.com/dmh/quick-release/commit/d41ce54) (dmh)
+* **[TASK]** update .editorconfig and .gitignore, add .npmrc, githooks and github actions [`9f49830`](https://github.com/dmh/quick-release/commit/9f49830) (dmh)
+
+***
+
 
 #### v2.1.0 `December 8, 2018`
 
