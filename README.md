@@ -17,9 +17,10 @@
 * [Changelog generation](#changelog-generation)
 * [GitHub Release Notes generation](#gitHub-release-notes-generation)
 * [Quick Release custom config](#quick-release-custom-config)
-  * [Default settings](#default_settings)
-  * [Custom settings example #1](#custom_settings_example_1)
-  * [Custom settings example #2](#custom_settings_example_2)
+  * [Default settings](#default-settings)
+  * [Custom settings example #1](#custom-settings-example-1)
+  * [Custom settings example #2](#custom-settings-example-2)
+* [Screenshots](#screenshots)
 * [Contributing](#contributing)
 * [Changelog](CHANGELOG.md)
 
@@ -138,7 +139,7 @@ initial commit
 >* initial commit [`7821b3c`](#) (author_name)
 
 #### GitHub Release Notes example based on git-log above with default settings
-
+<img width="1231" alt="GitHub Release Notes example" src="https://github.com/dmh/quick-release/assets/5150636/e8802c57-7404-4c77-9f24-8da770b2d1d4">
 
 ***
 
@@ -178,6 +179,7 @@ initial commit
 >* **[!!!]** breaking change commit message [`1f081e1`](#) (author_name)
 
 #### GitHub Release Notes example based on git-log above with custom settings #1
+<img width="1232" alt="GitHub Release Notes example" src="https://github.com/dmh/quick-release/assets/5150636/c71f2be3-406c-41b8-8511-4183d0608537">
 
 ***
 
@@ -219,8 +221,15 @@ initial commit
 >* **BREAKING CHANGE:** breaking change commit message [`1f081e1`](#) (author_name)
 
 #### GitHub Release Notes example based on git-log above with custom settings #2
+<img width="1232" alt="GitHub Release Notes example" src="https://github.com/dmh/quick-release/assets/5150636/65f57473-7625-49fb-8cc8-cf8f683a7511">
 
 ***
+
+## Screenshots
+<img width="600" alt="Release type" src="https://github.com/dmh/quick-release/assets/5150636/d25baf5b-1397-4cf0-9475-cd0658bc963f">
+<img width="600" alt="Choose version" src="https://github.com/dmh/quick-release/assets/5150636/eecf6ede-135e-4148-be14-2e5da26fcec5">
+<img width="635" alt="Ready for a new release" src="https://github.com/dmh/quick-release/assets/5150636/583fd580-9f4b-438d-a1ae-d6362be04c4f">
+
 
 ## Contributing
 1. Clone the repository and run `npm link` to install dependencies and create a symlink to the global `node_modules` folder.
